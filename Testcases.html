@@ -1,0 +1,75 @@
+<html><head><title>Quasic/jsformat Testcases</title>
+<style>
+td.Pass{background-color:green;color:white}
+td.Fail{background-color:red;color:black}
+</style>
+<script src="shim/console{entero,stringFrom}.js"></script>
+<script src="fdate.js"></script>
+<script src="HTML.js"></script>
+<script src="toJavaScript.js"></script>
+</head><body>
+<h2>Quasic/jsformat Testcases</h2>
+Copyright (C) Quasic of GitHub
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+You should have received a copy of the GNU Affero General Public License
+along with this program. If not, see &lt;<a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt;.
+<script>
+stringFrom=console.stringFrom;
+document.write('<table><tr><th>Test</th><th>Passed</th><th>Result</th><th>Expected</th></tr>');
+window.onerror=function(a,b,c){document.write('<tr><th colspan="4" style="background-color:black;color:red">'+a+" in "+b+"&lt;"+c+"&gt;</th></tr>");};
+T=0;P=0;
+function h(name){document.write('<tr><th colspan="4">'+name+'</th></tr>');}
+function t(js,expected){
+T++;
+var
+r=eval(js),
+c=r===expected;
+if(c)P++;
+c=c?"Pass":"Fail";
+document.write('<tr><td>'+HTML.fromFormattedString(js)+'</td><td class="'+c+'">'+c+'</td><td>'+HTML.fromFormattedString(stringFrom(r))+'</td><td>'+HTML.fromFormattedString(stringFrom(expected))+'</td></tr>');}
+t("true // testing comparison function itself, fail case",false);
+P=1-P;
+t("true // testing comparison function itself, pass case",true);
+h("console.stringFrom // used in result rendering");
+t("console.stringFrom(null)","null");
+t("console.stringFrom(true)","true");
+t("console.stringFrom(10)","10");
+
+h("HTML // used in result rendering");
+t('HTML.fromString("<&>")',"&lt;&amp;&gt;");
+t('HTML.fromFormattedString("\\t<&>\\n")'," &nbsp; &nbsp; &lt;&amp;&gt;<br />");
+if(T===P){
+t('HTML.Attribute.fromString(\'"<&>"\')',"&#34;&lt;&amp;&gt;&#34;");
+t('HTML.options({test:"Testing"})','<option value="test">Testing</option>')
+
+h("fdate");
+t("fdate('Y, YY, YYYY, M, MM, MMM, MMMM, WWW, WWWW, D, DD, H, HH, a, aa, aaaa, p, pp, pppp, h, hh, m, mm, s, ss, u, uu, uuu',(function(){var\nD=new Date('January 1, 1980');\nD.setHours(4);\nD.setMinutes(8);\nD.setSeconds(34);\nD.setMilliseconds(234);return D;})())","1980, 80, 1980, 1, 01, Jan, January, Tue, Tuesday, 1, 01, 4, 04, a, am, a.m., a, am, a.m., 4, 04, 8, 08, 34, 34, 2, 23, 234");
+t("fdate('Y, YY, YYYY, M, MM, MMM, MMMM, WWW, WWWW, D, DD, H, HH, a, aa, aaaa, p, pp, pppp, h, hh, m, mm, s, ss, u, uu, uuu, z, zz',new Date(18368678),1)","1970, 70, 1970, 1, 01, Jan, January, Thu, Thursday, 1, 01, 5, 05, a, am, a.m., a, am, a.m., 5, 05, 6, 06, 8, 08, 6, 67, 678, UTC+0000, (UTC)");
+t("fdate.numDays(0)//Jan",31);
+t("fdate.numDays(1,2014)//Feb",28);
+t("fdate.numDays(1,2004)//leap year",29);
+t("fdate.numDays(2)//Mar",31);
+t("fdate.numDays(3)//Apr",30);
+t("fdate.numDays(4)//May",31);
+t("fdate.numDays(5)//Jun",30);
+t("fdate.numDays(6)//Jul",31);
+t("fdate.numDays(7)//Aug",31);
+t("fdate.numDays(8)//Sep",30);
+t("fdate.numDays(9)//Oct",31);
+t("fdate.numDays(10)//Nov",30);
+t("fdate.numDays(11)//Dec",31);
+
+h("toJavaScript");
+
+}else alert("testcase system problem, stopping test...");
+document.write('<tr><td colspan="4">('+P+'/'+T+') testcases passed.</td></tr></table>');
+alert(T===P?"All testcases passed.":T-P+" testcases failed.");
+</script>
+</body></html>

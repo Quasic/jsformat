@@ -3,7 +3,8 @@
 td.Pass{background-color:green;color:white}
 td.Fail{background-color:red;color:black}
 </style>
-<script src="shim/console{entero,stringFrom}.js"></script>
+<!--script src="shim/console.entero.js"></script-->
+<script src="stringFrom.js"></script>
 <script src="fdate.js"></script>
 <script src="HTML.js"></script>
 <script src="toJavaScript.js"></script>
@@ -21,7 +22,6 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program. If not, see &lt;<a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt;.
 <script>
-stringFrom=console.stringFrom;
 document.write('<table><tr><th>Test</th><th>Passed</th><th>Result</th><th>Expected</th></tr>');
 window.onerror=function(a,b,c){document.write('<tr><th colspan="4" style="background-color:black;color:red">'+a+" in "+b+"&lt;"+c+"&gt;</th></tr>");};
 T=0;P=0;
@@ -37,10 +37,10 @@ document.write('<tr><td>'+HTML.fromFormattedString(js)+'</td><td class="'+c+'">'
 t("true // testing comparison function itself, fail case",false);
 P=1-P;
 t("true // testing comparison function itself, pass case",true);
-h("console.stringFrom // used in result rendering");
-t("console.stringFrom(null)","null");
-t("console.stringFrom(true)","true");
-t("console.stringFrom(10)","10");
+h("stringFrom // used in result rendering");
+t("stringFrom(null)","null");
+t("stringFrom(true)","true");
+t("stringFrom(10)","10");
 
 h("HTML // used in result rendering");
 t('HTML.fromString("<&>")',"&lt;&amp;&gt;");

@@ -2,6 +2,8 @@
 <style>
 td.Pass{background-color:green;color:white}
 td.Fail{background-color:red;color:black}
+span.Exception{background-color:yellow;color:red}
+th.Fatal{background-color:black;color:red}
 </style>
 <!--script src="shim/console.entero.js"></script-->
 <script src="stringFrom.js"></script>
@@ -23,24 +25,39 @@ You should have received a copy of the GNU Affero General Public License
 along with this program. If not, see &lt;<a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt;.
 <script>
 document.write('<table><tr><th>Test</th><th>Passed</th><th>Result</th><th>Expected</th></tr>');
-window.onerror=function(a,b,c){document.write('<tr><th colspan="4" style="background-color:black;color:red">'+a+" in "+b+"&lt;"+c+"&gt;</th></tr>");};
+window.onerror=function(a,b,c){document.write('<tr><th colspan="4" class="Fatal">'+a+" in "+b+"&lt;"+c+"&gt;</th></tr>");};
 T=0;P=0;
 function h(name){document.write('<tr><th colspan="4">'+name+'</th></tr>');}
 function t(js,expected){
 T++;
+try{
 var
 r=eval(js),
 c=r===expected;
 if(c)P++;
 c=c?"Pass":"Fail";
-document.write('<tr><td>'+HTML.fromFormattedString(js)+'</td><td class="'+c+'">'+c+'</td><td>'+HTML.fromFormattedString(stringFrom(r))+'</td><td>'+HTML.fromFormattedString(stringFrom(expected))+'</td></tr>');}
+r=HTML.fromFormattedString(stringFrom(r));
+}catch(e){
+c="Fail";
+r='Exception <span class="Exception">'+stringFrom(e)+'</span>';
+}
+document.write('<tr><td>'+HTML.fromFormattedString(js)+'</td><td class="'+c+'">'+c+'</td><td>'+r+'</td><td>'+HTML.fromFormattedString(stringFrom(expected))+'</td></tr>');
+}
 t("true // testing comparison function itself, fail case",false);
-P=1-P;
+t("8gse // testing comparison function itself, exception case","Exception Error(SyntaxError)...");
+P=2-P;
 t("true // testing comparison function itself, pass case",true);
 h("stringFrom // used in result rendering");
-t("stringFrom(null)","null");
+t("stringFrom(-10)","-10");
 t("stringFrom(true)","true");
-t("stringFrom(10)","10");
+t("stringFrom(undefined)","undefined");
+t("stringFrom(null)","null");
+t('stringFrom("\'\\0\\\\")','"\'\\0\\\\"');
+t("stringFrom('\"\\0\\\\')","'\"\\0\\\\'");
+t("stringFrom(new Error('just testing'))",'[Error: "just testing"]');
+t("stringFrom([3])","[3]");
+t("stringFrom({test:5})","{test:5}");
+t("(function(){return stringFrom(arguments,{depth:1})})(0)","[Arguments][0]{callee:[Function],\ncaller:"+(function(){return arguments.caller;})()+"}");
 
 h("HTML // used in result rendering");
 t('HTML.fromString("<&>")',"&lt;&amp;&gt;");
@@ -68,7 +85,7 @@ t("fdate.numDays(11)//Dec",31);
 
 h("toJavaScript");
 
-}else alert("testcase system problem, stopping test...");
+}else document.write('<tr><th colspan="4" class="Fatal">ABORT: testcase system problem, '+(T-P)+' failures, stopping test...</th></tr>');
 document.write('<tr><td colspan="4">('+P+'/'+T+') testcases passed.</td></tr></table>');
 alert(T===P?"All testcases passed.":T-P+" testcases failed.");
 </script>

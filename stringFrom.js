@@ -24,7 +24,14 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 if(!Array.prototype.indexOf)Array.prototype.indexOf=function(obj,fromIndex){var o=Object(this),len=o.length>>>0,n,k;if(!len||(n=Math.ceil(Math.abs(fromIndex))||0)>=len)return-1;for(k=n<0?Math.max(len-Math.abs(n),0):n;k<len;k++)if(k in o&&o[k]===obj)return k;return-1;};
 (function(){var
 OptS=Object.prototype.toString,
-R={c:/\\/g,q:/"/g,z:/\0/g,vk:/^[a-zA-Z_$][a-zA-Z0-9_$]*$/};
+R={
+c:/\\/g,
+q:/"/g,
+z:/\0/g,
+vk:/^[a-zA-Z_$][a-zA-Z0-9_$]*$/},
+noArguments=OptS.apply(argo())==="[object Object]";
+function argo(){return arguments;}
+if(noArguments&&!("caller"in argo()))noArguments=5;
 function functionDescriptor(f){var s=f.toString(),i=s.indexOf(')');return i<2?s:s.substring(0,i+1);}
 stringFrom=function(o,Opt){var s=typeof o;//deep inspect recursive?
 //other functions that could call stringFrom should not be used before or in the opt.depth===0 check to avoid infinite loops
@@ -37,10 +44,11 @@ stringFrom=function(o,Opt){var s=typeof o;//deep inspect recursive?
 	if(s.substring(0,8)==="[object ")s='['+s.substring(8);
 	if(s==="[Error]")return"[Error"+(o.name&&o.name!=="Error"?"("+o.name+")":"")+(o.number?"#"+o.number:"")+': "'+o.message+'"]';
 	var i,t,opt=typeof Opt==="object"?{depth:"depth" in Opt?Opt.depth:2,customInspect:Opt.customInspect||!"customInspect" in Opt,maxArrayLength:"maxArrayLength" in Opt?Opt.maxArrayLength:100,recursiveList:Opt.recursiveList||[],useFunctionDescriptor:Opt.useFunctionDescriptor}:{depth:2,customInspect:true,maxArrayLength:100,recursiveList:[]};
+if(s==="[Object]")
+if(noArguments&&o.callee&&"length"in o&&(noArguments===5||"caller"in o))s="[Arguments]";
 if(opt.depth<1)return s;
-if(opt.recursiveList.indexOf(o)>=0)return"[Circular "+s.substring(8);
+if(opt.recursiveList.indexOf(o)>=0)return"[Circular "+s.substring(1);
 if(!o.hasOwnProperty)opt.showInherited=true;
-if(s==="[Object]"&&o.callee&&"caller"in o&&"length"in o)s="[Arguments]";
 //actually should clone, here, as this might catch non-circular, parallel references, but this will avoid duplication in general...
 opt.recursiveList.push(o);
 if((typeof o.inspect==="function"||OptS.apply(o.inspect)==='[object Function]')&&opt.customInspect)return o.inspect(opt.depth,Opt,opt);

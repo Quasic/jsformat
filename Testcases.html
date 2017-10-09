@@ -1,15 +1,5 @@
 <html><head><title>Quasic/jsformat Testcases</title>
-<style>
-td.Pass{background-color:green;color:white}
-td.Fail{background-color:red;color:black}
-td.Exception{background-color:yellow;color:red}
-th.Fatal{background-color:black;color:red}
-</style>
-<!--script src="shim/console.entero.js"></script-->
-<script src="stringFrom.js"></script>
-<script src="fdate.js"></script>
-<script src="HTML.js"></script>
-<script src="toJavaScript.js"></script>
+<link rel="stylesheet" href="testcasesDocWrite.css"/>
 </head><body>
 <h2>Quasic/jsformat Testcases</h2>
 Copyright (C) <a href="//github.com/Quasic">Quasic of GitHub</a><br />
@@ -23,51 +13,15 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program. If not, see &lt;<a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt;.
+<noscript>This page is open source, but to run it, you need JavaScript enabled.</noscript>
+<!--script src="shim/console.entero.js"></script-->
+<script src="stringFrom.js"></script>
+<script src="fdate.js"></script>
+<script src="HTML.js"></script>
+<script src="testcasesDocWrite.js"></script>
+<script src="toJavaScript.js"></script>
 <script>
-document.write('<table><tr><th>Test</th><th>Passed</th><th>Result</th><th>Expected</th></tr>');
-window.onerror=function(a,b,c){document.write('<tr><th colspan="4" class="Fatal">'+a+" in "+b+"&lt;"+c+"&gt;</th></tr>");};
-T=0;F=[];
-function h(name){document.write('<tr><th colspan="4">'+name+'</th></tr>');}
-function t(js,expected){var
-j=HTML.fromFormattedString(js),
-r,
-c;
-T++;
-try{
-var
-r=eval(js),
-c=r===expected?"Pass":"Fail";
-}catch(e){
-c="Exception";
-r=e;
-}
-r=HTML.fromFormattedString(stringFrom(r));
-if(c!=="Pass")F[F.length]="{"+j+"} "+c+": "+r;
-document.write('<tr><td>'+j+'</td><td class="'+c+'">'+c+'</td><td>'+r+'</td><td>'+HTML.fromFormattedString(stringFrom(expected))+'</td></tr>');
-return c;
-}
-if(
-t(j="true // testing comparison function itself, fail case","Fail true")
-==="Fail"&&F[0]==="{"+j+"} Fail: true"&&
-t(j="8gse // testing comparison function itself, exception case","Exception [Error(SyntaxError)...")
-==="Exception"&&F[1].substring(0,(c="{"+j+"} Exception: [Error(SyntaxError)").length)===c)F=[];else t("F",[]);
-t("true // testing comparison function itself, pass case",true);
-h("stringFrom // used in result rendering");
-t("stringFrom(-10)","-10");
-t("stringFrom(true)","true");
-t("stringFrom(undefined)","undefined");
-t("stringFrom(null)","null");
-t('stringFrom("\'\\0\\\\")','"\'\\0\\\\"');
-t("stringFrom('\"\\0\\\\')","'\"\\0\\\\'");
-t("stringFrom(new Error('just testing'))",'[Error: "just testing"]');
-t("stringFrom([3])","[3]");
-t("stringFrom({test:5})","{test:5}");
-t("(function(){return stringFrom(arguments,{depth:1})})(0)","[Arguments][0]{callee:[Function],\ncaller:"+(function(){return arguments.caller;})()+"}");
-
-h("HTML // used in result rendering");
-t('HTML.fromString("<&>")',"&lt;&amp;&gt;");
-t('HTML.fromFormattedString("\\t<&>\\n")'," &nbsp; &nbsp; &lt;&amp;&gt;<br />");
-if(!F.length){
+testcasesDocWrite("jsformat",function(h,t){
 t('HTML.Attribute.fromString(\'"<&>"\')',"&#34;&lt;&amp;&gt;&#34;");
 t('HTML.options({test:"Testing"})','<option value="test">Testing</option>')
 
@@ -90,11 +44,6 @@ t("fdate.numDays(11)//Dec",31);
 
 h("toJavaScript");
 
-}else document.write('<tr><th colspan="4" class="Fatal">ABORT: testcase system problem, '+F.length+' failures, stopping test...</th></tr>');
-document.write('<tr><td colspan="4">('+(T-F.length)+'/'+T+') testcases passed.</td></tr></table>');
-r="";o={string:1,number:1};
-for(i in navigator)if(o[typeof navigator[i]])r+='<br />'+i+': '+navigator[i];
-document.write('<h2>Report</h2>'+(F.length?'Please paste the following report (redacted if necessary) and any other relevant info on <a href="//github.com/Quasic/jsformat/issues/new">GitHub</a>:<pre>'+F.join('<p />'):'<pre>')+'<p />Total Failures: '+F.length+r+'</pre>');
-alert(F.length?F.length+" testcases failed.":"All "+T+" testcases passed.");
+},{alert:true});
 </script>
 </body></html>

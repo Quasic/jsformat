@@ -1,0 +1,4 @@
+td.Pass{background-color:green;color:white}
+td.Fail{background-color:red;color:black}
+td.Exception{background-color:yellow;color:red}
+th.Fatal{background-color:black;color:red}

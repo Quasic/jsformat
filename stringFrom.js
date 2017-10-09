@@ -8,6 +8,7 @@ FireFox's Object.toSource
 For something better supporting circular references, use toJavaScript.js.
 A version supporting the window object is in my dom repo.
 A version supporting the WScript and ActiveXObject objects, including IE's window object, as well as VBScript objects, is built into the core of my wshta repo.
+I recently found, but haven't tried https://github.com/NV/jsDump
 
 Copyright (C) Quasic on GitHub
 This program is free software: you can redistribute it and/or modify

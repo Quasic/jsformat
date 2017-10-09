@@ -2,7 +2,7 @@
 <style>
 td.Pass{background-color:green;color:white}
 td.Fail{background-color:red;color:black}
-span.Exception{background-color:yellow;color:red}
+td.Exception{background-color:yellow;color:red}
 th.Fatal{background-color:black;color:red}
 </style>
 <!--script src="shim/console.entero.js"></script-->
@@ -26,26 +26,31 @@ along with this program. If not, see &lt;<a href="http://www.gnu.org/licenses/">
 <script>
 document.write('<table><tr><th>Test</th><th>Passed</th><th>Result</th><th>Expected</th></tr>');
 window.onerror=function(a,b,c){document.write('<tr><th colspan="4" class="Fatal">'+a+" in "+b+"&lt;"+c+"&gt;</th></tr>");};
-T=0;P=0;
+T=0;F=[];
 function h(name){document.write('<tr><th colspan="4">'+name+'</th></tr>');}
-function t(js,expected){
+function t(js,expected){var
+j=HTML.fromFormattedString(js),
+r,
+c;
 T++;
 try{
 var
 r=eval(js),
-c=r===expected;
-if(c)P++;
-c=c?"Pass":"Fail";
-r=HTML.fromFormattedString(stringFrom(r));
+c=r===expected?"Pass":"Fail";
 }catch(e){
-c="Fail";
-r='Exception <span class="Exception">'+stringFrom(e)+'</span>';
+c="Exception";
+r=e;
 }
-document.write('<tr><td>'+HTML.fromFormattedString(js)+'</td><td class="'+c+'">'+c+'</td><td>'+r+'</td><td>'+HTML.fromFormattedString(stringFrom(expected))+'</td></tr>');
+r=HTML.fromFormattedString(stringFrom(r));
+if(c!=="Pass")F[F.length]="{"+j+"} "+c+": "+r;
+document.write('<tr><td>'+j+'</td><td class="'+c+'">'+c+'</td><td>'+r+'</td><td>'+HTML.fromFormattedString(stringFrom(expected))+'</td></tr>');
+return c;
 }
-t("true // testing comparison function itself, fail case",false);
-t("8gse // testing comparison function itself, exception case","Exception Error(SyntaxError)...");
-P=2-P;
+if(
+t(j="true // testing comparison function itself, fail case","Fail true")
+==="Fail"&&F[0]==="{"+j+"} Fail: true"&&
+t(j="8gse // testing comparison function itself, exception case","Exception [Error(SyntaxError)...")
+==="Exception"&&F[1].substring(0,(c="{"+j+"} Exception: [Error(SyntaxError)").length)===c)F=[];else t("F",[]);
 t("true // testing comparison function itself, pass case",true);
 h("stringFrom // used in result rendering");
 t("stringFrom(-10)","-10");
@@ -62,7 +67,7 @@ t("(function(){return stringFrom(arguments,{depth:1})})(0)","[Arguments][0]{call
 h("HTML // used in result rendering");
 t('HTML.fromString("<&>")',"&lt;&amp;&gt;");
 t('HTML.fromFormattedString("\\t<&>\\n")'," &nbsp; &nbsp; &lt;&amp;&gt;<br />");
-if(T===P){
+if(!F.length){
 t('HTML.Attribute.fromString(\'"<&>"\')',"&#34;&lt;&amp;&gt;&#34;");
 t('HTML.options({test:"Testing"})','<option value="test">Testing</option>')
 
@@ -85,8 +90,11 @@ t("fdate.numDays(11)//Dec",31);
 
 h("toJavaScript");
 
-}else document.write('<tr><th colspan="4" class="Fatal">ABORT: testcase system problem, '+(T-P)+' failures, stopping test...</th></tr>');
-document.write('<tr><td colspan="4">('+P+'/'+T+') testcases passed.</td></tr></table>');
-alert(T===P?"All testcases passed.":T-P+" testcases failed.");
+}else document.write('<tr><th colspan="4" class="Fatal">ABORT: testcase system problem, '+F.length+' failures, stopping test...</th></tr>');
+document.write('<tr><td colspan="4">('+(T-F.length)+'/'+T+') testcases passed.</td></tr></table>');
+r="";o={string:1,number:1};
+for(i in navigator)if(o[typeof navigator[i]])r+='<br />'+i+': '+navigator[i];
+document.write('<h2>Report</h2>'+(F.length?'Please paste the following report (redacted if necessary) and any other relevant info on <a href="//github.com/Quasic/jsformat/issues/new">GitHub</a>:<pre>'+F.join('<p />'):'<pre>')+'<p />Total Failures: '+F.length+r+'</pre>');
+alert(F.length?F.length+" testcases failed.":"All "+T+" testcases passed.");
 </script>
 </body></html>

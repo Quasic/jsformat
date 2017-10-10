@@ -46,9 +46,10 @@ t("fdate.numDays(10)//Nov",30);
 t("fdate.numDays(11)//Dec",31);
 
 h("INI");
-t('INI.toText({testcase:"running",test:"hi",a:[0,1,2,3]})',"");
-s="myname=Tester\n   run=Test, Debug\n\n[appMenu]\nTest=Test\n     [test] \neof\neon    =  5\neoeoe=          tjeis\n    ffnnf       =nfonfds";
-t("INI.toText(INI.fromString("+stringFrom(s)+"))",s.replace(/ /g,''));
+t('INI.toText({testcase:"running",test:"hi",a:[0,1,2,3]})',"testcase=running\ntest=hi\n\n[a]\n0=0\n1=1\n2=2\n3=3\n");
+t("INI.toText(INI.fromString('myname=Tester\\n   run=Test-Debug\\n\\n  \\n[appMenu]\\nTest=Test\\n     [test] \\neof\\neon    =  5\\neoeoe=          tjeis\\n    ffnnf       =nfonfds'))","myname=Tester\nrun=Test-Debug\n\n[appMenu]\nTest=Test\n\n[test]\neof=\neon=5\neoeoe=tjeis\nffnnf=nfonfds\n");
+
+h("compareFunction");
 
 h("toJavaScript");
 

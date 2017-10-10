@@ -11,11 +11,11 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
-*///"use strict";
+*/
 if(typeof console!=="object")console={};
 if(!console.entero)console.entero=(function(){var
 S=0,
-f=function(){var
+f=function(){"use strict";var
 x=S,
 r=function(o){S=x;return o;};
 r.resume=function(){S=x+1;};
@@ -23,8 +23,8 @@ S++;return r;};
 f.getStackLength=function(){return S;};
 f.local=true;
 return f;})();
-function testcasesDocWrite(repo,callback,O){var
-o=O||{},
+function testcasesDocWrite(repo,callback,options){"use strict";var
+o=options||{},
 T=0,
 F=[],
 i,
@@ -39,18 +39,13 @@ j=HTML.fromFormattedString(js),
 r,
 c;
 T++;
-try{
-r=eval(js);
-c=r===expected?"Pass":"Fail";
-if(console.entero.getStackLength()!==1)c+=" Stack Imbalance"+(console.entero.getStackLength()-1);
-}catch(e){
-c="Exception";
-r=e;
-}
-r=HTML.fromFormattedString(stringFrom(r));
+r=testcasesDocWrite.e(js,expected);
+c=r[0];
+r=HTML.fromFormattedString(stringFrom(r[1]));
 if(c!=="Pass")F[F.length]="{"+j+"} "+c+(c.substring(0,5)==="Pass "?"":": "+r);
 document.write('<tr><td>'+j+'</td><td class="'+c+'">'+c+'</td><td>'+r+'</td><td>'+HTML.fromFormattedString(stringFrom(expected))+'</td></tr>');
 return x(c);}
+h("testcasesDocWrite, console.entero(some version) //testcase system");
 if(
 t(i="true // testing comparison function itself, fail case","Fail true")
 ==="Fail"&&F[0]==="{"+i+"} Fail: true"
@@ -75,7 +70,7 @@ t("stringFrom('\"\\0\\\\')","'\"\\0\\\\'");
 t("stringFrom(new Error('just testing'))",'[Error: "just testing"]');
 t("stringFrom([3])","[3]");
 t("stringFrom({test:5})","{test:5}");
-t("(function(){return stringFrom(arguments,{depth:1})})(0)","[Arguments][0]{callee:[Function],\ncaller:"+eval("(function(){return arguments;})()").caller+"}");
+testcasesDocWrite.nonStrictTest.stringFrom(h,t);
 
 h("HTML // used in result rendering");
 t('HTML.fromString("<&>")',"&lt;&amp;&gt;");
@@ -93,3 +88,16 @@ document.write('<h2>Report</h2>'+(F.length?'Please paste the following report (r
 if(console.entero.readLog)document.write('<h2>Verbose log</h2>'+HTML.fromFormattedString(console.entero.readLog()));
 if(o.alert)alert(F.length?F.length+" testcases failed.":"All "+T+" testcases passed.");
 }
+// avoid local clutter
+testcasesDocWrite.e=function(/*js,expected*/){"strict mode";try{
+arguments.s=console.entero.getStackLength();
+arguments.r=eval(arguments[0]);
+return[(arguments.r===arguments[1]?"Pass":"Fail")+(console.entero.getStackLength()===arguments.s?'':" Stack Imbalance"+(console.entero.getStackLength()-arguments.s)),arguments.r];
+}catch(e){
+return["Exception",e];
+}}
+// avoid strict mode
+testcasesDocWrite.nonStrictTest={stringFrom:function(h,t){
+h("stringFrom // outside of strict mode");
+t("(function(){return stringFrom(arguments,{depth:1})})(0)","[Arguments][0]{callee:[Function],\ncaller:"+eval("(function(){return arguments;})()").caller+"}");
+}};

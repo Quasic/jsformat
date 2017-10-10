@@ -20,6 +20,7 @@ if(location.search.toLowerCase().indexOf("verbose")>=0)document.write('<script s
 <script src="stringFrom.js"></script>
 <script src="fdate.js"></script>
 <script src="HTML.js"></script>
+<script src="INI.js"></script>
 <script src="testcasesDocWrite.js"></script>
 <script src="toJavaScript.js"></script>
 <script>
@@ -43,6 +44,11 @@ t("fdate.numDays(8)//Sep",30);
 t("fdate.numDays(9)//Oct",31);
 t("fdate.numDays(10)//Nov",30);
 t("fdate.numDays(11)//Dec",31);
+
+h("INI");
+t('INI.toText({testcase:"running",test:"hi",a:[0,1,2,3]})',"");
+s="myname=Tester\n   run=Test, Debug\n\n[appMenu]\nTest=Test\n     [test] \neof\neon    =  5\neoeoe=          tjeis\n    ffnnf       =nfonfds";
+t("INI.toText(INI.fromString("+stringFrom(s)+"))",s.replace(/ /g,''));
 
 h("toJavaScript");
 

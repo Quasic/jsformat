@@ -28,6 +28,8 @@ OptS=Object.prototype.toString,
 R={
 c:/\\/g,
 q:/"/g,
+n:/\n/g,
+r:/\r/g,
 z:/\0/g,
 vk:/^[a-zA-Z_$][a-zA-Z0-9_$]*$/},
 noArguments=OptS.apply(argo())==="[object Object]";
@@ -38,7 +40,7 @@ stringFrom=function(o,Opt){var s=typeof o;//deep inspect recursive?
 //other functions that could call stringFrom should not be used before or in the opt.depth===0 check to avoid infinite loops
 	if(s==="number"||s==="boolean"||s==="undefined"||o===null)return''+o;
 	if(s==="string"){
-	return o.indexOf('"')>=0&&o.indexOf("'")<0?"'"+o.replace(R.c,"\\\\").replace(R.z,"\\0")+"'":'"'+o.replace(R.c,"\\\\").replace(R.z,"\\0").replace(R.q,'\\"')+'"';
+	return o.indexOf('"')>=0&&o.indexOf("'")<0?"'"+o.replace(R.c,"\\\\").replace(R.z,"\\0").replace(R.n,"\\n").replace(R.r,"\\r")+"'":'"'+o.replace(R.c,"\\\\").replace(R.z,"\\0").replace(R.n,"\\n").replace(R.r,"\\r").replace(R.q,'\\"')+'"';
 	}
 	if(s==="object"||s==="function"){
 	s=s==="function"?"[object Function]":OptS.apply(o);

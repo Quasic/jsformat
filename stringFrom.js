@@ -77,4 +77,7 @@ if((typeof o.inspect==="function"||OptS.apply(o.inspect)==='[object Function]')&
 	}
 	if(!t.length&&s.substring(0,11)==="[Arguments]")t=['callee:'+stringFrom(o.callee,opt),'caller:'+stringFrom(o.caller,opt)];
 return(s==="[Object]"?'{'+t.join(',\n')+'}':s+(t.length?'{'+t.join(',\n')+'}':''));}return"["+s+"]";}
+stringFrom.host=function(o){return OptS.apply(o);};
+stringFrom.hybrid1=function(o){var t=typeof o;return t==="object"?"["+OptS.apply(o).substring(8):"["+t+"]";};//check to be sure starts with "[object "?
+stringFrom.hybrid2=function(o){var t=typeof o;return t==="object"?OptS.apply(o):"["+t+" "+o+"]";};
 })();

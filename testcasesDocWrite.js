@@ -12,6 +12,17 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 *///"use strict";
+if(typeof console!=="object")console={};
+if(!console.entero)console.entero=(function(){var
+S=0,
+f=function(){var
+x=S,
+r=function(o){S=x;return o;};
+r.resume=function(){S=x+1;};
+S++;return r;};
+f.getStackLength=function(){return S;};
+f.local=true;
+return f;})();
 function testcasesDocWrite(repo,callback,O){var
 o=O||{},
 T=0,
@@ -23,28 +34,36 @@ document.write('<table><caption>Quasic/'+repo+'/'+(o.path||'')+' testcases</capt
 window.onerror=function(a,b,c){document.write('<tr><th colspan="4" class="Fatal">'+a+" in "+b+"&lt;"+c+"&gt;</th></tr>");};
 function h(name){document.write('<tr><th colspan="4">'+name+'</th></tr>');}
 function t(js,expected){var
+x=console.entero(null,"testcasesDocWrite::t",arguments),
 j=HTML.fromFormattedString(js),
 r,
 c;
 T++;
 try{
-var
-r=eval(js),
+r=eval(js);
 c=r===expected?"Pass":"Fail";
+if(console.entero.getStackLength()!==1)c+=" Stack Imbalance"+(console.entero.getStackLength()-1);
 }catch(e){
 c="Exception";
 r=e;
 }
 r=HTML.fromFormattedString(stringFrom(r));
-if(c!=="Pass")F[F.length]="{"+j+"} "+c+": "+r;
+if(c!=="Pass")F[F.length]="{"+j+"} "+c+(c.substring(0,5)==="Pass "?"":": "+r);
 document.write('<tr><td>'+j+'</td><td class="'+c+'">'+c+'</td><td>'+r+'</td><td>'+HTML.fromFormattedString(stringFrom(expected))+'</td></tr>');
-return c;
-}
+return x(c);}
 if(
 t(i="true // testing comparison function itself, fail case","Fail true")
-==="Fail"&&F[0]==="{"+i+"} Fail: true"&&
+==="Fail"&&F[0]==="{"+i+"} Fail: true"
+&&
+t("console.entero() // testing comparison function itself, fail case with stack imbalance 1","Fail Stack Imbalance1")
+==="Fail Stack Imbalance1"
+&&
 t(i="8gse // testing comparison function itself, exception case","Exception [Error(SyntaxError)...")
-==="Exception"&&F[1].substring(0,(s="{"+i+"} Exception: [Error(SyntaxError)").length)===s)F=[];else t("F",[]);
+==="Exception"&&F[2].substring(0,(s="{"+i+"} Exception: [Error(SyntaxError)").length)===s
+&&
+t("console.entero(),console.entero(),'Pass Stack Imbalance2' // testing comparison function itself, pass case with stack imbalance 2","Pass Stack Imbalance2")
+==="Pass Stack Imbalance2"
+)F=[];else t("F",[]);
 t("true // testing comparison function itself, pass case",true);
 h("stringFrom // used in result rendering");
 t("stringFrom(-10)","-10");
@@ -64,11 +83,13 @@ t('HTML.fromFormattedString("\\t<&>\\n")'," &nbsp; &nbsp; &lt;&amp;&gt;<br />");
 if(F.length)
 document.write('<tr><th colspan="4" class="Fatal">ABORT: testcase system problem, '+F.length+' failures, stopping test...</th></tr>');
 else callback(h,t);
+h("[Results]");
 s=F.length?"Fail":"Pass";
 document.write('<tr><th>Result</th><td class="'+s+'">('+(T-F.length)+'/'+T+')</td><td>Testcases '+s+'ed.</td><th>Result</th></tr></table>');
 s="";
 k={string:1,number:1};
 for(i in navigator)if(k[typeof navigator[i]])s+='<br />'+i+': '+navigator[i];
-document.write('<h2>Report</h2>'+(F.length?'Please paste the following report (redacted if necessary) and any other relevant info on <a href="//github.com/Quasic/'+repo+'/issues/new">GitHub</a>:<pre>'+F.join('<p />'):'<pre>')+'<p />Total Failures: '+F.length+s+'</pre>');
+document.write('<h2>Report</h2>'+(F.length?'Please paste the following report (redacted if necessary) and any other relevant info on <a href="//github.com/Quasic/'+repo+'/issues/new">GitHub</a>:<p /><code>Local entero: '+console.entero.local+'<p />'+F.join('<p />'):'')+'<p />Total Failures: '+F.length+s+'</code>');
+if(console.entero.readLog)document.write('<h2>Verbose log</h2>'+HTML.fromFormattedString(console.entero.readLog()));
 if(o.alert)alert(F.length?F.length+" testcases failed.":"All "+T+" testcases passed.");
 }

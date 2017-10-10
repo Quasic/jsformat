@@ -21,9 +21,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/"use strict";var stringFrom;
+*/var stringFrom;
 if(!Array.prototype.indexOf)Array.prototype.indexOf=function(obj,fromIndex){var o=Object(this),len=o.length>>>0,n,k;if(!len||(n=Math.ceil(Math.abs(fromIndex))||0)>=len)return-1;for(k=n<0?Math.max(len-Math.abs(n),0):n;k<len;k++)if(k in o&&o[k]===obj)return k;return-1;};
-(function(){var
+(function(){"use strict";var
 OptS=Object.prototype.toString,
 R={
 c:/\\/g,
@@ -47,8 +47,9 @@ stringFrom=function(o,Opt){var s=typeof o;//deep inspect recursive?
 	if(s.substring(0,8)==="[object ")s='['+s.substring(8);
 	if(s==="[Error]")return"[Error"+(o.name&&o.name!=="Error"?"("+o.name+")":"")+(o.number?"#"+o.number:"")+': "'+o.message+'"]';
 	var i,t,opt=typeof Opt==="object"?{depth:"depth" in Opt?Opt.depth:2,customInspect:Opt.customInspect||!"customInspect" in Opt,maxArrayLength:"maxArrayLength" in Opt?Opt.maxArrayLength:100,recursiveList:Opt.recursiveList||[],useFunctionDescriptor:Opt.useFunctionDescriptor}:{depth:2,customInspect:true,maxArrayLength:100,recursiveList:[]};
-if(s==="[Object]")
+if(s==="[Object]")try{
 if(noArguments&&o.callee&&"length"in o&&(noArguments===5||"caller"in o))s="[Arguments]";
+}catch(e){s="[Arguments<strict>]";}
 if(opt.depth<1)return s;
 if(opt.recursiveList.indexOf(o)>=0)return"[Circular "+s.substring(1);
 if(!o.hasOwnProperty)opt.showInherited=true;
@@ -59,7 +60,7 @@ if((typeof o.inspect==="function"||OptS.apply(o.inspect)==='[object Function]')&
 	if(opt.depth)opt.depth--;
 	if(s==='[Function]'){
 	s=(opt.useFunctionDescriptor?functionDescriptor(o):o.toString())+'\t';
-	}else if((s.substring(s.length-6)==='Array]'||s.substring(0,11)==="[Arguments]")&&(opt.maxArrayLength||opt.maxArrayLength===null)){
+	}else if((s.substring(s.length-6)==='Array]'||s.substring(0,10)==="[Arguments")&&(opt.maxArrayLength||opt.maxArrayLength===null)){
 	t=[];
 	i=opt.maxArrayLength===null?o.length:Math.min(o.length,opt.maxArrayLength);
 	for(i--;i>=0;i--)t[i]=stringFrom(o[i],opt);
@@ -77,7 +78,7 @@ if((typeof o.inspect==="function"||OptS.apply(o.inspect)==='[object Function]')&
 	else for(i in o)if(o.hasOwnProperty(i))
 	t.push((i.search(R.vk)<0?'"'+i.replace(R.c,"\\\\").replace(R.q,'\\"')+'"':i)+':'+stringFrom(o[i],opt));
 	}
-	if(!t.length&&s.substring(0,11)==="[Arguments]")t=['callee:'+stringFrom(o.callee,opt),'caller:'+stringFrom(o.caller,opt)];
+	if(!t.length&&s.substring(0,11)==="[Arguments]")try{t=['callee:'+stringFrom(o.callee,opt),'caller:'+stringFrom(o.caller,opt)];}catch(e){s="[Arguments<strict>]"+s.substring(11);}
 return(s==="[Object]"?'{'+t.join(',\n')+'}':s+(t.length?'{'+t.join(',\n')+'}':''));}return"["+s+"]";}
 stringFrom.host=function(o){return OptS.apply(o);};
 stringFrom.hybrid1=function(o){var t=typeof o;return t==="object"?"["+OptS.apply(o).substring(8):"["+t+"]";};//check to be sure starts with "[object "?

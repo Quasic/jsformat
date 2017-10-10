@@ -48,8 +48,8 @@ return x(O);
 fromString:function(s){var
 x=entero(0,"INI.fromString",arguments),
 l=s.split(/\r?\n/),
-h={readLine:function(){if(l.length<2)h.atEndOfStream=true;return l.shift();},atEndOfStream:!s,close:enter("INI::StringStream",[s])};
-return INI.fromStream(h);},
+h={readLine:function(){if(l.length<2)h.atEndOfStream=true;return l.shift();},atEndOfStream:!s,close:function(){}};
+return x(INI.fromStream(h));},
 toText:function(o){var
 s="",
 a=[],

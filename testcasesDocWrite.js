@@ -36,19 +36,20 @@ function h(name){document.write('<tr><th colspan="4">'+name+'</th></tr>');}
 function t(js,expected){var
 x=console.entero(null,"testcasesDocWrite::t",arguments),
 j=HTML.fromFormattedString(js),
+E=HTML.fromFormattedString(stringFrom(expected)),
 r,
 c;
 T++;
 r=testcasesDocWrite.e(js,expected);
 c=r[0];
 r=HTML.fromFormattedString(stringFrom(r[1]));
-if(c!=="Pass")F[F.length]="{"+j+"} "+c+(c.substring(0,5)==="Pass "?"":": "+r);
-document.write('<tr><td>'+j+'</td><td class="'+c+'">'+c+'</td><td>'+r+'</td><td>'+HTML.fromFormattedString(stringFrom(expected))+'</td></tr>');
+if(c!=="Pass")F[F.length]="{"+j+"} "+c+(c.substring(0,5)==="Pass "?"":": "+r+"\n!==\n"+E);
+document.write('<tr><td>'+j+'</td><td class="'+c+'">'+c+'</td><td>'+r+'</td><td>'+E+'</td></tr>');
 return x(c);}
 h("testcasesDocWrite, console.entero(some version) //testcase system");
 if(
 t(i="true // testing comparison function itself, fail case","Fail true")
-==="Fail"&&F[0]==="{"+i+"} Fail: true"
+==="Fail"&&F[0]==='{'+i+'} Fail: true\n!==\n"Fail true"'
 &&
 t("console.entero() // testing comparison function itself, fail case with stack imbalance 1","Fail Stack Imbalance1")
 ==="Fail Stack Imbalance1"
@@ -75,16 +76,17 @@ testcasesDocWrite.nonStrictTest.stringFrom(h,t);
 h("HTML // used in result rendering");
 t('HTML.fromString("<&>")',"&lt;&amp;&gt;");
 t('HTML.fromFormattedString("\\t<&>\\n")'," &nbsp; &nbsp; &lt;&amp;&gt;<br />");
+t('"'+stringFrom.host(callback)+'" // stringFrom.host(callback)',"[object Function]");
 if(F.length)
 document.write('<tr><th colspan="4" class="Fatal">ABORT: testcase system problem, '+F.length+' failures, stopping test...</th></tr>');
 else callback(h,t);
 h("[Results]");
 s=F.length?"Fail":"Pass";
-document.write('<tr><th>Result</th><td class="'+s+'">('+(T-F.length)+'/'+T+')</td><td>Testcases '+s+'ed.</td><th>Result</th></tr></table>');
+document.write('<tr><th>// (passed/total) testcases</th><td class="'+s+'">('+(T-F.length)+'/'+T+')</td><td>'+F.length+' failures, result: '+s+'</td></tr></table>');
 s="";
 k={string:1,number:1};
 for(i in navigator)if(k[typeof navigator[i]])s+='<br />'+i+': '+navigator[i];
-document.write('<h2>Report</h2>'+(F.length?'Please paste the following report (redacted if necessary) and any other relevant info on <a href="//github.com/Quasic/'+repo+'/issues/new">GitHub</a>:<p /><code>Local entero: '+console.entero.local+'<p />'+F.join('<p />'):'')+'<p />Total Failures: '+F.length+s+'</code>');
+document.write('<h2>Report</h2>'+(F.length?'Please paste the following report (redacted if necessary) and any other relevant info on <a href="//github.com/Quasic/'+repo+'/issues/new">GitHub</a>:<p /><code>Local entero (non-verbose mode): '+console.entero.local+'<p />'+F.join('<p />'):'')+'<p />Total Failures: '+F.length+s+'</code>');
 if(console.entero.readLog)document.write('<h2>Verbose log</h2>'+HTML.fromFormattedString(console.entero.readLog()));
 if(o.alert)alert(F.length?F.length+" testcases failed.":"All "+T+" testcases passed.");
 }

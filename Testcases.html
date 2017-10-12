@@ -1,5 +1,5 @@
 <html><head><title>Quasic/jsformat Testcases</title>
-<link rel="stylesheet" href="testcasesDocWrite.css"/>
+<link rel="stylesheet" href="Testcases.css"/>
 </head><body>
 <h2>Quasic/jsformat Testcases</h2>
 Copyright (C) <a href="//github.com/Quasic">Quasic of GitHub</a><br />
@@ -21,10 +21,10 @@ if(location.search.toLowerCase().indexOf("verbose")>=0)document.write('<script s
 <script src="fdate.js"></script>
 <script src="HTML.js"></script>
 <script src="INI.js"></script>
-<script src="testcasesDocWrite.js"></script>
+<script src="testcasesWriteHTML.js"></script>
 <script src="toJavaScript.js"></script>
 <script>
-testcasesDocWrite("jsformat",function(h,t){
+testcasesWriteHTML(document,"jsformat",function(h,t){
 t('HTML.Attribute.fromString(\'"<&>"\')',"&#34;&lt;&amp;&gt;&#34;");
 t('HTML.options({test:"Testing"})','<option value="test">Testing</option>')
 

@@ -33,19 +33,18 @@ if(typeof console!=="object")var console={log:function(){},error:function(){}};
 OptS=Object.prototype.toString,
 stringFrom=typeof stringFrom==="function"||OptS.apply(stringFrom)==="[object Function]"?stringFrom:function(o){var t=typeof o;return t==="object"?OptS.apply(o):"["+t+" "+o+"]";},
 S=0,
+D={},
 L="";
-function fn(object,n,params,d){var
-p=[],
-i;
-if(params&&params.length)for(i=0;i<params.length;i++)p[i]=params[i];//toSource?
-return(object?stringFrom(object)+'.':'')
-+n+(p.length?'('+p.join(',')+')':'')
-+(d.deprecated?'[deprecated: '+d.deprecated+']':'')
-;}
 console.entero=function(object,n,params,O){"use strict";var
 d=O||{},
-N=fn(object,n,params,d),
+N=(object?stringFrom(object)+'.':'')+n,
 x=S,
+f;
+if(d.deprecated)D[N]=d.deprecated;
+N+=
+(params?"("+(params.length?params.length===1?[params[0]]:Array.apply(null,params)).join(",")+")":"")
++(d.deprecated?'[deprecated: '+d.deprecated+']':'')
+;
 f="$"+ ++S+": "+N+" entered.";
 console.log(f);
 L+=f+"\n";
@@ -55,14 +54,15 @@ console.log(s);
 L+=s+"\n";
 S=x;
 return r;};
-f.resume=function(e,O){var
-s="$"+S+": "+(O?fn(object,n,params,O):N)+"Error: "+e.message;
+f.resume=function(e){var
+s="$"+S+": "+N+" Error("+e.name+"): "+e.message;
 console.error(s);
 L+=s+"\n";
 S=x+1;
 return e;
 };
 return f;};
+console.entero.getDeprecatedUsage=function(){return D;};
 console.entero.readLog=function(){var r=L;L="";return r;};
 console.entero.getStackLength=function(){return S;};
 })();

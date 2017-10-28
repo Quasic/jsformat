@@ -15,12 +15,15 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 if(typeof console!=="object")console={};
 if(!console.entero)console.entero=(function(){var
 S=0,
-f=function(){"use strict";var
+D={},
+f=function(object,name,args,options){"use strict";var
 x=S,
 r=function(o){S=x;return o;};
 r.resume=function(){S=x+1;};
+if(options&&options.deprecated)D[(object&&object+"."||'')+name]=options.deprecated;
 S++;return r;};
 f.getStackLength=function(){return S;};
+f.getDeprecatedUsage=function(){return D;};
 f.local=true;
 return f;})();
 function testcasesWriteHTML(stream,repo,callback,options){"use strict";var
@@ -81,6 +84,7 @@ if(F.length)
 stream.write('<tr><th colspan="4" class="Fatal">ABORT: testcase system problem, '+F.length+' failures, stopping test...</th></tr>');
 else callback(h,t);
 h("[Results]");
+t("stringFrom(console.entero.getDeprecatedUsage())","{}");
 s=F.length?"Fail":"Pass";
 stream.write('<tr><th>// (passed/total) testcases</th><td class="'+s+'">('+(T-F.length)+'/'+T+')</td><td>'+F.length+' failures, result: '+s+'</td></tr></table>');
 s="";
@@ -97,7 +101,7 @@ arguments.r=eval(arguments[0]);
 return[(arguments.r===arguments[1]?"Pass":"Fail")+(console.entero.getStackLength()===arguments.s?'':" Stack Imbalance"+(console.entero.getStackLength()-arguments.s)),arguments.r];
 }catch(e){
 return["Exception",e];
-}}
+}};
 // avoid strict mode
 testcasesWriteHTML.nonStrictTest={stringFrom:function(h,t){
 h("stringFrom // outside of strict mode");
